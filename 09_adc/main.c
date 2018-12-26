@@ -68,6 +68,21 @@ void joystick_init(void)
 	  //инициализация порта С заданными параметрами
 	  PORT_Init(MDR_PORTC, &PortInit);
 
+	  //Инициализация порта кнопки UP (B5) на вход
+	  // направление передачи данных = вход
+	  PortInit.PORT_OE = PORT_OE_IN;
+	  // режим работы вывода порта = Порт
+	  PortInit.PORT_FUNC = PORT_FUNC_PORT;
+	  // режим работы выводе =цифровой
+	  PortInit.PORT_MODE = PORT_MODE_DIGITAL;
+	  // скорость фронта вывода= медленный
+	  PortInit.PORT_SPEED = PORT_SPEED_SLOW;
+	  // выбор вывода 6 для инициализации
+	  PortInit.PORT_Pin = PORT_Pin_5;
+	  //инициализация порта С заданными параметрами
+	  PORT_Init(MDR_PORTB, &PortInit);
+
+
 	  //Инициализация порта кнопки RIGHT (B6) на вход
 	  // направление передачи данных = вход
 	  PortInit.PORT_OE = PORT_OE_IN;
@@ -93,6 +108,21 @@ void joystick_init(void)
 	  PortInit.PORT_SPEED = PORT_SPEED_SLOW;
 	  // выбор вывода 3 для инициализации
 	  PortInit.PORT_Pin = PORT_Pin_3;
+	  //инициализация порта С заданными параметрами
+	  PORT_Init(MDR_PORTE, &PortInit);
+
+
+	  //Инициализация порта кнопки DOWN (E1) на вход
+	  // направление передачи данных = вход
+	  PortInit.PORT_OE = PORT_OE_IN;
+	  // режим работы вывода порта = Порт
+	  PortInit.PORT_FUNC = PORT_FUNC_PORT;
+	  // режим работы выводе =цифровой
+	  PortInit.PORT_MODE = PORT_MODE_DIGITAL;
+	  // скорость фронта вывода= медленный
+	  PortInit.PORT_SPEED = PORT_SPEED_SLOW;
+	  // выбор вывода 3 для инициализации
+	  PortInit.PORT_Pin = PORT_Pin_1;
 	  //инициализация порта С заданными параметрами
 	  PORT_Init(MDR_PORTE, &PortInit);
 
@@ -228,6 +258,10 @@ int main()
 	  uint16_t VAL1 = 0x0;
 	  uint16_t VAL2 = 0x2FF;
 
+	  uint16_t VAL1temp = 0x0;
+	  uint16_t VAL2temp = 0x2FF;
+
+
   // Настраиваем и запускаем АЦП
   ADCInit();
   pins_init();
@@ -245,17 +279,19 @@ int main()
     if (!(MDR_PORTE->RXTX & LEFT))//LEFT
     {
     VAL1=rawResult;
+    VAL1temp=rawResult;
     }
     if (!(MDR_PORTB->RXTX & RIGHT))//RIGHT
     {
     VAL2=rawResult;
+    VAL2temp=rawResult;
     }
-    if (PORT_ReadInputDataBit(MDR_PORTB, PORT_Pin_5) == Bit_RESET)//UP
+    if (!(MDR_PORTB->RXTX & UP))//UP
     {
-    VAL1=0xFFF;
-    VAL2=0xFFF;
+    VAL1=VAL1temp;
+    VAL2=VAL2temp;
     }
-    if (PORT_ReadInputDataBit(MDR_PORTE, PORT_Pin_1) == Bit_RESET)//DOWN
+    if (!(MDR_PORTE->RXTX & DOWN))//DOWN
     {
     VAL1=0;
     VAL2=0;
